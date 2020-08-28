@@ -1,0 +1,52 @@
+{% extends "network/layout.html" %}
+{% block body %}
+    <h3>Posts from people you follow</h3>
+
+    {% for post in posts %}
+        <div class="card" style="padding:23px;">
+            <div style="display:flex">
+                <a style="font-size:18px" href="{% url 'profile' post.user.username%}">{{post.user.username}}</a>
+                <div class="w-100 d-flex justify-content-end">
+                    <p style="color:gray; padding-bottom: 10px;">{{post.timestamp}}&nbsp;&nbsp;&nbsp;
+                        {% if request.user == post.user %}
+                            <span style="font-weight:600;" class="text-primary edit" data-id="{{post.id}}" id="edit-btn-{{post.id}}">Edit</span>
+                        {% endif %}
+                    </p>  
+                </div>
+            </div>
+            <div style="display:flex; justify-content:space-between">
+                <span id="post-content-{{post.id}}">{{post.post}}</span>
+                <textarea data-id="{{post.id}}" id="post-edit-{{post.id}}" style="display:none;" cols="130">{{post.post}}</textarea>
+                <div class="like">
+                    <img width="45" height="25" data-id="{{post.id}}" id="post-like-{{post.id}}" class="liked"
+                        {% if not request.user in post.like.all %}
+                            data-is_liked="no"
+                            src="https://img.icons8.com/carbon-copy/100/000000/like--v2.png"
+                        {%else%}
+                            data-is_liked="yes"
+                            src="https://img.icons8.com/plasticine/100/000000/like.png"
+                        {%endif%}
+                    />
+                    <span id="post-count-{{post.id}}">{{post.like.count}}</span>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div style="display:flex; justify-content:center">
+        <nav aria-label="Page navigation ">
+            <p class="pagination">
+                {% if posts.has_previous %}                    
+                        <a class="page-link" href="?page={{posts.previous_page_number}}" aria-label="Previous">&laquo;</a>                    
+                {% else %}                    
+                        <a class="page-link" href="#" aria-label="Previous">&laquo;</a>
+                {% endif %}
+                {% if posts.has_next %}
+                        <a class="page-link" href="?page={{posts.next_page_number}}" aria-label="Next">&raquo;</a>
+                {% else %}
+                        <a class="page-link" href="#" aria-label="Next">&raquo;</a>
+                {% endif %}
+            </p>
+        </nav>
+    </div>
+{% endblock %}
